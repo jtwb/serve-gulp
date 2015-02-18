@@ -1,0 +1,19 @@
+{
+  "name": "gulp-on-demand",
+  "version": "0.0.1",
+  "description": "What if gulp/vinyl could build assets on the fly?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jtwb",
+  "license": "MIT",
+  "dependencies": {
+    "gulp": "^3.8.11",
+    "through2": "^0.6.3"
+  },
+  "devDependencies": {
+    "gulp-ext-replace": "^0.1.0",
+    "gulp-sass": "^1.3.3"
+  }
+}
