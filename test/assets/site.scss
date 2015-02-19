@@ -1,0 +1,11 @@
+$primary: #4169E1;
+$secondary: #d5d5d5;
+
+body.site {
+  header, .header {
+    background-color: $secondary;
+  }
+  a, .link {
+    color: $primary;
+  }
+}
