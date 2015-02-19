@@ -4,9 +4,9 @@ var http = require('http');
 var port = process.env.PORT || 80;
 
 
-function start(lazybuilder) {
+function start(builder) {
   http.createServer(function(req, res) {
-    lazybuilder.get(req, function(content, error) {
+    builder.get(req, function(content, error) {
       if (error) {
         console.log('GET', req.url, error.code);
         res.writeHead(error.code);

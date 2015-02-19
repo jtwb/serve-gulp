@@ -1,5 +1,5 @@
 var server = require('./server/index');
-var lazybuilder = require('./lib/tasks');
+var builder = require('./lib/gulpjit');
 
 
-server.start(lazybuilder);
+server.start(builder);
