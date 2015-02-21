@@ -1,10 +1,10 @@
+var path = require('path');
+var argv = require('minimist')(process.argv.slice(2));
 var server = require('./server/');
-
-var port = process.env.PORT || 80;
-var basedir = process.argv[2] || __dirname;
 
 
 server.start({
-  port: port,
-  basedir: basedir
+  port: process.env.PORT || 80,
+  basedir: argv['basedir'] || __dirname,
+  taskfile: path.resolve(argv['taskfile'] || './tasks.js')
 });

@@ -7,9 +7,7 @@ var port = process.env.PORT || 80;
 
 function start(options) {
   var port = options.port;
-  var builder = gulpjit.configure({
-    basedir: options.basedir
-  });
+  var builder = gulpjit.configure(options);
 
   http.createServer(function(req, res) {
     builder.get(req, function(content, error) {

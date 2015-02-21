@@ -10,7 +10,7 @@ What if Gulp could build assets on the fly?
 
 Yes. Webpack dev server writes to an in-memory FS, while Gulp-JIT just captures the output of the gulp stream.
 
-### Can I provide my own gulpfile?
+### Can I provide my own gulp tasks?
 
 Yes. Gulp-JIT will behave reasonably by default.
 
@@ -21,6 +21,8 @@ Default operations:
 - Reactify JSX -> JS
 - Browserify JS
 - Concatenate JS in jit:\*js and jit:\*\*js mode
+
+To provide your own, pass `taskfile` to `server.start` or the CLI. Your file will look something like `tasks.js` included in this project.
 
 ### Reserved names
 
