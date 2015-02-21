@@ -1,0 +1,15 @@
+$primary: #4169E1;
+$secondary: #d5d5d5;
+
+body.homepage {
+  header, .header {
+    background-color: $secondary;
+    h1 {
+      font-size: 90px;
+    }
+  }
+  a, .link {
+    color: $primary;
+  }
+}
+
