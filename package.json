@@ -1,6 +1,6 @@
 {
   "name": "gulp-jit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "What if gulp/vinyl could build assets on the fly?",
   "main": "index.js",
   "scripts": {
