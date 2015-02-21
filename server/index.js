@@ -13,7 +13,7 @@ function start(builder) {
         res.end(error.message);
         return;
       }
-      console.log('GET', req.url, 200, '||', content.length + ' bytes');
+      console.log('GET', req.url, 200, ',', content.length + ' bytes');
       res.writeHead(200, { 'Content-Length': content.length });
       res.end(content);
     });
