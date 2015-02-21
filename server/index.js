@@ -1,10 +1,16 @@
 var http = require('http');
+var gulpjit = require('../lib/gulpjit');
 
 
 var port = process.env.PORT || 80;
 
 
-function start(builder) {
+function start(options) {
+  var port = options.port;
+  var builder = gulpjit.configure({
+    basedir: options.basedir
+  });
+
   http.createServer(function(req, res) {
     builder.get(req, function(content, error) {
       if (error) {

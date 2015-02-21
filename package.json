@@ -1,10 +1,11 @@
 {
-  "name": "gulp-on-demand",
+  "name": "gulp-jit",
   "version": "0.0.1",
   "description": "What if gulp/vinyl could build assets on the fly?",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "node server.js ./test"
   },
   "author": "jtwb",
   "license": "MIT",
