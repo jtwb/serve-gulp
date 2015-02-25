@@ -2,6 +2,16 @@
 
 Build and serve bundles or single files on-demand with Gulp. Does not write to disk.
 
+Install: `npm install -g jtwb/serve-gulp`
+
+Install step 2: copy `tasks.js` from this repo into your current directory. Customize as desired.
+
+Run: `PORT=8081 serve-gulp --taskfile ./tasks.js --basedir .`
+
+To try an example, clone this repo and run the server in the *tests* directory like this: `PORT=8081 serve-gulp --taskfile ../tasks.js --basedir .`. Then
+try: `curl -v localhost:8081/assets/css/site.css`.
+
+# Everything below this line is probably false
 ```bash
 ~/src/myapp$ find .
 ./gulpfile.js
