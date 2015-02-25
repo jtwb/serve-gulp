@@ -6,9 +6,14 @@ var path = require('path');
 var server = require('../server/');
 
 
-server.start({
+var options = {
   port: process.env.PORT || 80,
+  host: process.env.HOST || '0.0.0.0',
   basedir: argv['basedir'] || __dirname,
   taskfile: path.resolve(argv['taskfile'] || './tasks.js')
-});
+};
 
+server.start(options, function() {
+  // runs in HTTP server context
+  console.error('[Serve-gulp] listening at', this.address());
+});
