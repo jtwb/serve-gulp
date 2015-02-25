@@ -4,40 +4,45 @@ var concat = require('gulp-concat');
 
 
 var tasks = {
-  'css': function(src, out) {
+  'jit:css': function(src, out) {
     gulp.src(src)
       .pipe(sass())
       .pipe(out())
   },
 
-  '*css': function(src, out) {
+  'jit:*css': function(src, out) {
     gulp.src(src)
       .pipe(sass())
       .pipe(concat('all.js'))
       .pipe(out())
   },
 
-  '**css': function(src, out) {
+  'jit:**css': function(src, out) {
     gulp.src(src)
       .pipe(sass())
       .pipe(concat('recursive.js'))
       .pipe(out())
   },
 
-  'js': function(src, out) {
+  'jit:js': function(src, out) {
     gulp.src(src)
       .pipe(out())
   },
 
-  '*js': function(src, out) {
+  'jit:*js': function(src, out) {
     gulp.src(src)
       .pipe(concat('all.js'))
       .pipe(out())
   },
 
-  '**js': function(src, out) {
+  'jit:**js': function(src, out) {
     gulp.src(src)
       .pipe(concat('recursive.js'))
+      .pipe(out())
+  },
+
+  'jit:static': function(src, out) {
+    gulp.src(src)
       .pipe(out())
   }
 };
