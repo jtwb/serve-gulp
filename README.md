@@ -8,11 +8,11 @@ What if Gulp could build assets on the fly?
 
 ### Is this like Webpack Dev Server?
 
-Yes. Webpack dev server writes to an in-memory FS, while Gulp-JIT just captures the output of the gulp stream.
+Yes. Webpack dev server writes to an in-memory FS, while serve-gulp just captures the output of the gulp stream.
 
 ### Can I provide my own gulp tasks?
 
-Yes. Gulp-JIT will behave reasonably by default.
+Yes. Serve-gulp will behave reasonably by default.
 
 Default operations:
 
@@ -56,16 +56,16 @@ In your `server.js` (this example uses ExpressJS):
 
 ```javascript
 var request = require('request');
-var gulpjit = require('gulpjit');
+var gulpjit = require('serve-gulp');
 
-var gulpjitport = gulpjit.start({
+var gulpport = gulpjit.start({
     port: 0, // random
     basedir: __dirname
 });
-var gulpjithost = ['localhost', gulpjitport].join(':');
+var gulphost = ['localhost', gulpport].join(':');
 
 app.use('/assets/', function(req, res, next) {
-    req.pipe(request(gulpjithost).pipe(res));
+    req.pipe(request(gulphost).pipe(res));
 });
 ```
 
