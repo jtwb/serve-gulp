@@ -2,7 +2,7 @@
   "name": "serve-gulp",
   "author": "jtwb",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Build and serve bundles or single files on-demand with Gulp. Does not write to disk.",
   "main": "index.js",
   "bin": {
