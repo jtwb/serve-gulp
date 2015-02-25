@@ -1,6 +1,9 @@
-var path = require('path');
+#!/usr/bin/env node
+
+'use strict';
 var argv = require('minimist')(process.argv.slice(2));
-var server = require('./server/');
+var path = require('path');
+var server = require('../server/');
 
 
 server.start({
@@ -8,3 +11,4 @@ server.start({
   basedir: argv['basedir'] || __dirname,
   taskfile: path.resolve(argv['taskfile'] || './tasks.js')
 });
+

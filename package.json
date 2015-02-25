@@ -1,14 +1,23 @@
 {
-  "name": "gulp-jit",
-  "version": "0.1.0",
-  "description": "What if gulp/vinyl could build assets on the fly?",
-  "main": "index.js",
-  "scripts": {
-    "start": "node server.js",
-    "test": "node server.js ./test"
-  },
+  "name": "serve-gulp",
   "author": "jtwb",
   "license": "MIT",
+  "version": "0.1.0",
+  "description": "Build and serve bundles or single files on-demand with Gulp. Does not write to disk.",
+  "main": "index.js",
+  "bin": {
+    "serve-gulp": "./bin/serve-gulp.js"
+  },
+  "scripts": {
+    "start": "./bin/serve-gulp.js",
+    "test": "./bin/serve-gulp.js ./test"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "server",
+    "index.js"
+  ],
   "dependencies": {
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.1",
