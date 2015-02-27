@@ -29,30 +29,33 @@ try: `curl -v localhost:8081/assets/css/site.css`.
 
 ~/src/myapp$ npm install -g serve-gulp
 ~/src/myapp$ sudo serve-gulp assets
-[Serve-gulp] listening at { address: '0.0.0.0', family: 'IPv4', port: 63600 }GET /assets/css/all.css 200 ; 43kb
+[Serve-gulp] listening at { address: '0.0.0.0', family: 'IPv4', port: 80 }
+GET /assets/css/all.css 200 ; 43kb
 GET /assets/css/site.css 200 ; 5kb
 GET /assets/js/components/recursive.js 200 ; 60kb
 GET /assets/js/utils.js 200 ; 2kb
-^C
-~/src/myapp$ 
 ```
 
 ### How do I use it?
 
 **serve-gulp \<directory\>** will act as a transformation proxy for the files in \<directory\>. It will respond to a request like `GET /assets/css/site.css` by searching for */assets/css/site.{css,scss,sass,less}* and converting the file down to css.
 
-| source    | default tasks        | rollup? |
-|-----------|----------------------|---------|
-| css       | nil                  | yes     |
-| scss,sass | gulp-sass            | yes     |
-| less      | gulp-less            | yes     |
-| js        | browserify           | yes     |
-| jsx       | reactify, browserify | yes     |
-| html      | html                 | no      |
+| source    | default tasks        | rollup? | version
+|-----------|----------------------|---------|---|
+| css       | nil                  | yes     | 0.1.0
+| scss,sass | gulp-sass            | yes     | 0.1.0
+| less      | gulp-less            | yes     | ? |
+| js        | browserify           | yes     | 0.1.0
+| jsx       | reactify, browserify | yes     | ? |
+| html      | html                 | no      | 0.2.0
 
 ### How do I provide my own processing rules?
 
-**serve-gulp** will check the current directory for a file named [gulpfile.js](https://github.com/gulpjs/gulp/blob/master/docs/API.md). It will search for special tasks named **jit:sass**, **jit:less**, **jit:js** and **jit:jsx**. You can also override how rollups are processed with **jit:\*sass**, **jit:\*less**, etc.
+Create a file like [tasks.js](tasks.js) in this repo. When you start the server, set `--taskfile` to point to your file.
+
+*The following describes future behavior*
+
+*Ideally*, **serve-gulp** will check the current directory for a file named [gulpfile.js](https://github.com/gulpjs/gulp/blob/master/docs/API.md). It will search for special tasks named **jit:sass**, **jit:less**, **jit:js** and **jit:jsx**. You can also override how rollups are processed with **jit:\*sass**, **jit:\*less**, etc.
 
 [Gulpfile documentation](https://github.com/gulpjs/gulp/blob/master/docs/API.md)
 
@@ -76,14 +79,23 @@ Or, you can have your webserver boot up **serve-gulp** via the API, then proxy i
 // [my-server.js]
 var serveGulp = require('serve-gulp');
 
-var gulpserver = serveGulp.start({
+var serveGulpConf = {
 	port: 0, // random port
 	host: 'localhost',
 	target: 'assets'
-});
+};
+
+var GULP_PORT;
+
 
 app.use('/assets/', function(req, res, next) {
-    req.pipe(request(gulpserver.hostname).pipe(res));
+    req.pipe(request(GULP_PORT).pipe(res));
+});
+
+
+serveGulp.start(serveGulpConf, function() {
+	GULP_PORT = this.address();
+	app.start();
 });
 ```
 
@@ -91,8 +103,17 @@ Or, you could do something similar to the above example with a custom middleware
 
 ### Is this like Webpack Dev Server?
 
-Yes. Webpack dev server writes to an in-memory FS, while serve-gulp just captures the output of the gulp stream.
+Yes. Serve-gulp runs one file at a time and captures the output that would be written to disk. Webpack Dev Server runs your whole build in an in-memory FS and serves files from the in-memory FS.
 
+### Is this like Gulp OnDemand Server?
+
+No. [Gulp OnDemand Server](https://github.com/ernestoalejo/gulp-ondemand-server) triggers a full gulp build on each request and does not necessarily serve the latest version of the file. This tool builds the requested file on the fly and returns the very freshest version.
+
+```
+GET /assets/js/all.js
+ -> gulp.run('js', 'all.js');
+ -> emit( 'function(){var a,b,c=0;for(a... ' );
+```
 
 ### Reserved names
 
@@ -122,23 +143,6 @@ assets/
   └── checkout.scss
 ```
 
-In your `server.js` (this example uses ExpressJS):
-
-```javascript
-var request = require('request');
-var gulpjit = require('serve-gulp');
-
-var gulpport = gulpjit.start({
-    port: 0, // random
-    basedir: __dirname
-});
-var gulphost = ['localhost', gulpport].join(':');
-
-app.use('/assets/', function(req, res, next) {
-    req.pipe(request(gulphost).pipe(res));
-});
-```
-
 In your HTML:
 
 ```html
@@ -161,7 +165,7 @@ In your HTML:
 
 ### Other notes
 
-gulp-ondemand-server[1] kicks off a gulp task after each page load. This tool actually builds the requested file on the fly and returns the very freshest version.
+gulp-ondemand-server[1] kicks off a gulp task after each page load. This tool builds the requested file on the fly and returns the very freshest version.
 
 GET /assets/js/all.js
  -> gulp.run('js', 'all.js');
