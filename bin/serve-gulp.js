@@ -9,9 +9,9 @@ var server = require('../server/');
 var options = {
   port: process.env.PORT || 80,
   host: process.env.HOST || '0.0.0.0',
-  restrict: argv['restrict'] || argv._[0] || '.',
-  basedir: argv['basedir'] || __dirname,
-  taskfile: path.resolve(argv['taskfile'] || './tasks.js')
+  basedir: path.resolve(argv['basedir'] || '.'),
+  restrict: path.resolve(argv['restrict'] || argv._[0] || argv['basedir'] || '.'),
+  taskfile: path.resolve(argv['taskfile'] || path.join(__dirname, '../tasks.js'))
 };
 console.error(options);
 
