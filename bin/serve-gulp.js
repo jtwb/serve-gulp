@@ -13,7 +13,10 @@ var options = {
   restrict: path.resolve(argv['restrict'] || argv._[0] || argv['basedir'] || '.'),
   taskfile: path.resolve(argv['taskfile'] || path.join(__dirname, '../tasks.js'))
 };
-console.error(options);
+
+if (argv['v'] || argv['verbose']) {
+  console.error('[Serve-gulp] Boot options:', options);
+}
 
 server.start(options, function() {
   // runs in HTTP server context

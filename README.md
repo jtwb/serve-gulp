@@ -4,14 +4,12 @@ Build and serve bundles or single files on-demand with Gulp. Does not write to d
 
 Install: `npm install -g jtwb/serve-gulp`
 
-Install step 2: copy `tasks.js` from this repo into your current directory. Customize as desired.
+Run: `PORT=8080 serve-gulp static/`
 
-Run: `PORT=8081 serve-gulp --taskfile ./tasks.js --basedir .`
-
-To try an example, clone this repo and run the server in the *tests* directory like this: `PORT=8081 serve-gulp --taskfile ../tasks.js --basedir .`. Then
+To try the included example, clone this repo and run the server in the *tests* directory like this: `PORT=8081 serve-gulp assets/`. Then
 try: `curl -v localhost:8081/assets/css/site.css`.
 
-# Everything below this line is probably false
+
 ```bash
 ~/src/myapp$ find .
 ./gulpfile.js
@@ -30,9 +28,8 @@ try: `curl -v localhost:8081/assets/css/site.css`.
 ./assets/js/utils.js
 
 ~/src/myapp$ npm install -g serve-gulp
-~/src/myapp$ serve-gulp assets
-Listening on localhost:80
-GET /assets/css/all.css 200 ; 43kb
+~/src/myapp$ sudo serve-gulp assets
+[Serve-gulp] listening at { address: '0.0.0.0', family: 'IPv4', port: 63600 }GET /assets/css/all.css 200 ; 43kb
 GET /assets/css/site.css 200 ; 5kb
 GET /assets/js/components/recursive.js 200 ; 60kb
 GET /assets/js/utils.js 200 ; 2kb
