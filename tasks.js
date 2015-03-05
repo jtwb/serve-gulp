@@ -20,7 +20,7 @@ var tasks = {
   'jit:**css': function(src, out) {
     gulp.src(src)
       .pipe(sass())
-      .pipe(concat('recursive.js'))
+      .pipe(concat('recursive.css'))
       .pipe(out())
   },
 
