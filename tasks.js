@@ -13,7 +13,7 @@ var tasks = {
   'jit:*css': function(src, out) {
     gulp.src(src)
       .pipe(sass())
-      .pipe(concat('all.js'))
+      .pipe(concat('all.css'))
       .pipe(out())
   },
 
