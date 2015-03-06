@@ -10,14 +10,11 @@ var sass = require('gulp-sass');
  */
 
 
-DYNAMIC_SRC = null;
-
-
 gulp.task('default', ['jit:css']);
 
 
 gulp.task('jit:css', function() {
-  gulp.src(DYNAMIC_SRC || './assets/css/*.scss')
+  gulp.src('./assets/css/*.scss')
     .pipe(sass())
     .pipe(concat('all.css'))
     .pipe(gulp.dest('./assets/dist'))
@@ -25,7 +22,7 @@ gulp.task('jit:css', function() {
 
 
 gulp.task('jit:*css', function() {
-  gulp.src(DYNAMIC_SRC || './assets/css/*.scss')
+  gulp.src('./assets/css/*.scss')
     .pipe(sass())
     .pipe(concat('all.css'))
     .pipe(gulp.dest('./test/assets'))
@@ -33,7 +30,7 @@ gulp.task('jit:*css', function() {
 
 
 gulp.task('jit:**css', function() {
-  gulp.src(DYNAMIC_SRC || './assets/css/**/*.scss')
+  gulp.src('./assets/css/**/*.scss')
     .pipe(sass())
     .pipe(concat('recursive.css'))
     .pipe(gulp.dest('./test/assets'))
@@ -41,27 +38,27 @@ gulp.task('jit:**css', function() {
 
 
 gulp.task('jit:js', function() {
-  gulp.src(DYNAMIC_SRC || './assets/js/*.js')
+  gulp.src('./assets/js/*.js')
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./test/assets'))
 });
 
 
 gulp.task('jit:*js', function() {
-  gulp.src(DYNAMIC_SRC || './assets/js/*.js')
+  gulp.src('./assets/js/*.js')
     .pipe(concat('all.js'))
     .pipe(gulp.dest('./test/assets'))
 });
 
 
 gulp.task('jit:**js', function() {
-  gulp.src(DYNAMIC_SRC || './assets/js/**/*.js')
+  gulp.src('./assets/js/**/*.js')
     .pipe(concat('recursive.js'))
     .pipe(gulp.dest('./test/assets'))
 });
 
 
 gulp.task('jit:static', function() {
-  gulp.src(DYNAMIC_SRC)
+  gulp.src()
     .pipe(gulp.dest('./test/assets'))
 });
