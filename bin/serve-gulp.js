@@ -11,7 +11,8 @@ var options = {
   host: process.env.HOST || '0.0.0.0',
   basedir: path.resolve(argv['basedir'] || '.'),
   restrict: path.resolve(argv['restrict'] || argv._[0] || argv['basedir'] || '.'),
-  taskfile: path.resolve(argv['taskfile'] || path.join(__dirname, '../tasks.js'))
+  taskfile: path.resolve(argv['taskfile'] || path.join(__dirname, '../tasks.js')),
+  gulpfile: path.resolve(argv['gulpfile'] || path.join(__dirname, '../gulpfile.js'))
 };
 
 if (argv['v'] || argv['verbose']) {
