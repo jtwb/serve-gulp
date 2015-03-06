@@ -6,7 +6,7 @@ var sass = require('gulp-sass');
 
 /*
  * When serve-gulp runs your gulpfile.js, it will use
- * rewire[1] to override DYNAMIC_SRC
+ * rewire[1] to override `gulp.src` and `gulp.dest`
  */
 
 
