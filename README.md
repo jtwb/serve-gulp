@@ -1,32 +1,41 @@
 # serve-gulp
 
-Build and serve bundles or single files on-demand with Gulp. Does not write to disk.
+Build and serve bundles or single files on-demand with Gulp.
 
-Install: `npm install -g jtwb/serve-gulp`
+### Usage
 
-Run: `PORT=8080 serve-gulp static/`
+`serve-gulp [-v] [--gulpfile gulpfile] [path ...]`
 
-To try the included example, clone this repo and run the server in the *tests* directory like this: `PORT=8081 serve-gulp assets/`. Then
+Environment variables: `PORT`, `HOST`
+
+**serve-gulp** will serve files at `http://0.0.0.0:80` (configurable) according to the rules in your gulpfile. Only files residing in the paths given are allowed. If no paths are given, it will serve files from the current directory. See [Options](#options) and [How Requests Are Handled](#how_requests_are_handled).
+
+If you did not specify a gulpfile with `--gulpfile` and there is a file named `gulpfile.js` in the current directory, that will be used as your gulpfile. If neither is found, **serve-gulp** has a default internal gulpfile. See [Bring Your Own Gulpfile](#bring_your_own_gulpfile) and [Default Gulpfile](#default_gulpfile).
+
+Requests with filename `all.js`, `recursive.js`, `all.css` or `recursive.css` will activate rollup mode. See [How Requests Are Handled](#how_requests_are_handled).
+
+
+More details:
+
+*   [Options](#options)
+*   [Default Gulpfile](#default_gulpfile)
+*   [Bring Your Own Gulpfile](#bring_your_own_gulpfile)
+*   [How Requests Are Handled](#how_requests_are_handled)
+*   [Server Integrations and NodeJS API](#server_integrations_and_nodejs_api)
+
+
+### Install
+
+`npm install -g jtwb/serve-gulp`
+
+
+### Example
+
+To try the included example, clone this repo and run the server in [example/](example) directory like this: `PORT=8081 serve-gulp assets/`. Then
 try: `curl -v localhost:8081/assets/css/site.css`.
 
 
 ```bash
-~/src/myapp$ find .
-./gulpfile.js
-./assets
-./assets/css
-./assets/css/bootstrap.scss
-./assets/css/site.scss
-./assets/css/skin.scss
-./assets/js
-./assets/js/components
-./assets/js/components/cart
-./assets/js/components/cart/icon.jsx
-./assets/js/components/cart/detail.jsx
-./assets/js/components/login.jsx
-./assets/js/components/billing.jsx
-./assets/js/utils.js
-
 ~/src/myapp$ npm install -g serve-gulp
 ~/src/myapp$ sudo serve-gulp assets
 [Serve-gulp] listening at { address: '0.0.0.0', family: 'IPv4', port: 80 }
@@ -36,40 +45,148 @@ GET /assets/js/components/recursive.js 200 ; 60kb
 GET /assets/js/utils.js 200 ; 2kb
 ```
 
-### How do I use it?
 
-**serve-gulp \<directory\>** will act as a transformation proxy for the files in \<directory\>. It will respond to a request like `GET /assets/css/site.css` by searching for */assets/css/site.{css,scss,sass,less}* and converting the file down to css.
+### Options
 
-| source    | default tasks        | rollup? | version
-|-----------|----------------------|---------|---|
-| css       | nil                  | yes     | 0.1.0
-| scss,sass | gulp-sass            | yes     | 0.1.0
-| less      | gulp-less            | yes     | ? |
-| js        | browserify           | yes     | 0.1.0
-| jsx       | reactify, browserify | yes     | ? |
-| html      | html                 | no      | 0.2.0
+CLI Arguments
 
-### How do I provide my own processing rules?
+`serve-gulp [-v] [--gulpfile gulpfile] [path ...]`
 
-Create a file like [tasks.js](tasks.js) in this repo. When you start the server, set `--taskfile` to point to your file.
+*  `-v, --verbose` yeah
+*  `--gulpfile gulpfile` specify a custom gulpfile. If no custom gulpfile is given and `gulpfile.js` is present in the current directory, that file will be selected implicitly.
+*  `--basedir path` resolve request paths against this path. Default is `.`, the current directory.
+*  `[path ...]` Incoming requests must refer to directories which contain one or more of these whitelist paths as a prefix. Example: if I run `cd /var/www/myapp; serve-gulp assets` then my whitelist paths are `[ /var/www/myapp/assets/ ]`. A request to `GET /assets/css/site.css` will resolve to `/var/www/myapp/assets/css/`, which does contain `/var/www/myapp/assets/` as a prefix.
 
-*The following describes future behavior*
+Environment arguments
 
-*Ideally*, **serve-gulp** will check the current directory for a file named [gulpfile.js](https://github.com/gulpjs/gulp/blob/master/docs/API.md). It will search for special tasks named **jit:sass**, **jit:less**, **jit:js** and **jit:jsx**. You can also override how rollups are processed with **jit:\*sass**, **jit:\*less**, etc.
+*  `HOST` listen IP. `127.0.0.1` will restrict the server to local requests. `0.0.0.0` has no restrictions. Default is `0.0.0.0`
+*  `PORT` listen port. Default is `80`. Note that `0` will choose a random port which on some operating systems is guaranteed to be unused.
 
-[Gulpfile documentation](https://github.com/gulpjs/gulp/blob/master/docs/API.md)
+Implicit arguments
 
-You can specify the task file with **--gulpfile**.
+*  If `gulpfile.js` is present in the current directory and `--gulpfile` is not set, the local gulpfile will be used as a custom gulpfile. See [Bring Your Own Gulpfile](#bring_your_own_gulpfile).
 
-### How do I prevent serving files outside the assets tree?
 
-In the example above, **serve-gulp assets** will only serve files from `./assets` relative to the current directory. The first argument to the script specifies the restriction root.
 
-Note that requests paths are still resolved relative to the current directory! In the example, browsers might retrieve `http://example.lol/assets/css/site.css` and the path is resolved relative to the current directory.
+### Default Gulpfile
 
-Note that relative paths (e.g. **/../../../etc/shadow**) are first resolved against a fake **/** before being resolved from the current directory for safety. Caveat: please use symlinks responsibly.
+The default gulpfile applies these steps
 
-### How do I run serve-gulp on the same port as my web server?
+| taskname   | rollup? | steps |
+|------------|---------|-------|
+| jit:css    | no      | gulp-sass |
+| jit:\*css  | yes     | gulp-sass \| concat |
+| jit:\*\*css | yes    | gulp-sass \| concat |
+| jit:js     | no      | none |
+| jit:\*js   | yes     | concat |
+| jit:\*\*js | yes     | concat |
+| jit:static | no      | none |
+
+
+### Bring Your Own Gulpfile
+
+If you already use Gulp, and you have a `gulpfile.js` in the current directory, **serve-gulp** can use that file.
+
+**Criteria** Your gulpfile must define all of the tasks shown above in [Default Gulpfile](#default_gulpfile). See [example/gulpfile.js](example/gulpfile.js).
+
+If you can, try aliasing the `jit:` tasks to your existing tasks like this:
+
+```javascript
+gulp.task('jit:css', ['css']);
+```
+
+**serve-gulp** will run your gulp tasks with `gulp.src` and `gulp.dest` replaced with special just-in-time tools.
+
+
+
+### How Requests Are Handled
+
+
+| request extension | search               | taskname   | rollup? |
+|-------------------|----------------------|------------|---------|
+| file.css          | file.{css,scss,sass} | jit:css    | no      |
+| all.css           | \*.{css,scss,sass}   | jit:\*css  | yes     |
+| recursive.css     | \*\*/\*.{css,scss,sass} | jit:\*\*css | yes |
+| file.js           | file.js              | jit:js     | no      |
+| all.js            | \*.js                | jit:\*js   | yes     |
+| recursive.js      | \*\*/\*.js           | jit:\*\*js | yes     |
+| file.html         | file.html            | jit:static |         |
+
+`cd /var/www/myapp; serve-gulp assets`
+
+##### Example 1: `GET /assets/css/site.css`
+
+0.  Verify request path is contained in at least one allowed path
+   1. `allowed_paths := [ /var/www/myapp/assets/ ]`
+   1. `request_path := /var/www/myapp/assets/css/`
+   2. `-> OK`
+1.  Convert filename to glob
+   2. `extension == .css`
+   3. 	`name ∉ [ all, recursive ]`
+   3. `-> /var/www/myapp/assets/css/site.{css,scss,sass}`
+2.  Select gulp task
+	3. `extension == .css`
+	4. `name ∉ [ all, recursive ]`
+	4. `-> jit:css`
+3.  Run gulp task with `gulp.src(...)` overriden to the glob above and `gulp.dest(...)` overriden to serve the result
+
+```javascript
+gulp.task('jit:css', function() {
+	gulp.src()
+		.pipe(gulp-sass())
+		.pipe(gulp.dest())
+});
+```
+
+
+##### Example 2: `GET /assets/../../../../etc/passwd`
+
+0.  Verify request path is contained in at least one allowed path
+   1. `allowed_paths := [ /var/www/myapp/assets/ ]`
+   1. `request_path := /var/www/myapp/etc/passwd`
+	   2. Relative paths are resolved against a false root first
+   2. `-> Forbidden`
+
+
+##### Example 3: `GET /assets/css/recursive.css`
+
+0.  Verify request path is contained in at least one allowed path
+   1. `allowed_paths := [ /var/www/myapp/assets/ ]`
+   1. `request_path := /var/www/myapp/assets/css/`
+   2. `-> OK`
+1.  Convert filename to glob
+   2. `extension == .css`
+   3. `name == recursive`
+   3. `-> /var/www/myapp/assets/css/**/*.{css,scss,sass}`
+2.  Select gulp task
+	3. `extension == .css`
+	4. `name == recursive`
+	4. `-> jit:**css`
+3.  Run gulp task with `gulp.src(...)` overriden to the glob above and `gulp.dest(...)` overriden to serve the result
+
+```javascript
+gulp.task('jit:**css', function() {
+	gulp.src()
+		.pipe(gulp-sass())
+		.pipe(concat())
+		.pipe(gulp.dest())
+});
+```
+
+
+### How does serve-gulp prevent serving files outside the assets tree?
+
+In the example above, **serve-gulp assets** will only serve files from `./assets` relative to the current directory. The first argument to the script specifies the restriction path. Multiple restriction paths are allowed and combined via union.
+
+**Relative paths** (e.g. **/../../../etc/shadow**) are first resolved against a fake **/** before being resolved from the current directory for safety.
+
+**Symlinks** are handled like so: the `realpath` of the request path must contain the `realpath` of one or more restriction paths.
+
+
+### Server Integrations and NodeJS API
+
+
+#### How do I run serve-gulp on the same port as my web server?
 
 You could configure [nginx](https://github.com/nginx/nginx) to listen on 0.0.0.0:80, proxy **^/assets** to **serve-gulp** on 127.0.0.1:8081 and proxy everything else to your web server on 127.0.0.1:8080.
 
@@ -101,9 +218,13 @@ serveGulp.start(serveGulpConf, function() {
 
 Or, you could do something similar to the above example with a custom middleware for **ExpressJS**, **uWSGI**, **Rack**, etc.
 
+
+
 ### Is this like Webpack Dev Server?
 
 Yes. Serve-gulp runs one file at a time and captures the output that would be written to disk. Webpack Dev Server runs your whole build in an in-memory FS and serves files from the in-memory FS.
+
+
 
 ### Is this like Gulp OnDemand Server?
 
@@ -115,13 +236,6 @@ GET /assets/js/all.js
  -> emit( 'function(){var a,b,c=0;for(a... ' );
 ```
 
-### Reserved names
-
-`all.css` searches for `*.{scss,css}` in the target directory.
-
-`recursive.css` searches for `./**/*.{scss,css}` in the target directory.
-
-`all.js`, `recursive.js` trigger `*.{js,jsx,coffee}`, `./**/*.{js,jsx,coffee}`, respectively.
 
 ### Another Example
 
@@ -167,13 +281,16 @@ In your HTML:
 
 gulp-ondemand-server[1] kicks off a gulp task after each page load. This tool builds the requested file on the fly and returns the very freshest version.
 
+```
 GET /assets/js/all.js
  -> gulp.run('js', 'all.js');
  -> emit( 'function(){var a,b,c=0;for(a... ' );
+```
 
 [1] https://github.com/ernestoalejo/gulp-ondemand-server
 
-*Next steps*
+
+### *Enhancement Proposals*
 
 * Support a list of whitelisted paths as command line arguments, e.g.
     $ serve-gulp assets/bodies assets/components assets/layouts
