@@ -175,10 +175,11 @@ GET /assets/js/all.js
 
 *Next steps*
 
+* Support a list of whitelisted paths as command line arguments, e.g.
+    $ serve-gulp assets/bodies assets/components assets/layouts
 * In "watch mode", (eventually the default for systems with that capability), cache results in-memory and invalidate when any target inode changes.
 * Accept fingerprints in filenames and query strings, e.g. file.css?b57b91e893fd6d68ce and file___909fe4bc7387f31fa24a8f.css are the same as file.css
 * Send cache-control headers
-* Content-type
 * Gzip
 * Etag
 * I'd like to cache this stuff, please! In-memory is OK, but please give me an optional Memcached host/port.

@@ -7,21 +7,30 @@ var fs = require('fs');
 var server = require('../server/');
 
 
-var local_gulpfile_found;
-if (!argv['gulpfile']) {
+function readGulpfilePath() {
+  var local_gulpfile_found;
+  if (argv['gulpfile']) {
+    return argv['gulpfile'];
+  }
   try {
     local_gulpfile_found = fs.statSync(path.resolve('./gulpfile.js'));
   } catch(e) { }
+  return local_gulpfile_found ? 'gulpfile.js' : path.join(__dirname, '../gulpfile.js')
 }
+
+
+function readRestrictPaths() {
+  var paths = argv['restrict'] || argv._ || argv['basedir'] || '.';
+  return [].concat.apply([], [paths]);  // flatten
+}
+
 
 var options = {
   port: process.env.PORT || 80,
   host: process.env.HOST || '0.0.0.0',
   basedir: path.resolve(argv['basedir'] || '.'),
-  restrict: path.resolve(argv['restrict'] || argv._[0] || argv['basedir'] || '.'),
-  gulpfile: path.resolve(
-      argv['gulpfile'] ||
-      (local_gulpfile_found ? 'gulpfile.js' : path.join(__dirname, '../gulpfile.js')))
+  restrict: (readRestrictPaths()).map(function(restrict) { return path.resolve(restrict) }),
+  gulpfile: path.resolve(readGulpfilePath())
 };
 
 if (argv['v'] || argv['verbose']) {
