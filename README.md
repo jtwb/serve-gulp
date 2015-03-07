@@ -185,35 +185,75 @@ In the example above, **serve-gulp assets** will only serve files from `./assets
 
 ### Server Integrations and NodeJS API
 
+```javascript
+var serveGulp = require('serve-gulp');
+var path = require('path');
+
+serveGulp.start({
+  host: '0.0.0.0',
+  port: '80',
+  basedir: path.resolve('.'),
+  restrict: path.resolve('assets'),
+  gulpfile: path.resolve('./gulpfile.js')
+});
+```
+
+If you want to use **dynamic port allocation**, pass an onBoot callback and fetch the address at that time.
+
+```javascript
+var serveGulp = require('serve-gulp');
+var path = require('path');
+
+serveGulp.start({
+  host: '0.0.0.0',
+  port: '0',
+  basedir: path.resolve('.'),
+  restrict: path.resolve('assets'),
+  gulpfile: path.resolve('./gulpfile.js')
+}, function() {
+  console.log(this.address());
+});
+```
 
 #### How do I run serve-gulp on the same port as my web server?
 
-You could configure [nginx](https://github.com/nginx/nginx) to listen on 0.0.0.0:80, proxy **^/assets** to **serve-gulp** on 127.0.0.1:8081 and proxy everything else to your web server on 127.0.0.1:8080.
+With [nginx](https://github.com/nginx/nginx) you could set two upstreams, one mapping **^/assets** to **serve-gulp** on 127.0.0.1:8081 and the other mapping everything else to your web server on 127.0.0.1:8080.
 
-Or, you can have your webserver boot up **serve-gulp** via the API, then proxy it in your app (example uses **Express.js**).
+```
+// in the future there will be an nginx conf example here
+```
+
+With the **Express.js** webserver you could start **serve-gulp** on a random port and proxy-mount that port to **^/assets**.
 
 ```javascript
-// [my-server.js]
+var express = require('express');
 var serveGulp = require('serve-gulp');
+var path = require('path');
 
-var serveGulpConf = {
-	port: 0, // random port
-	host: 'localhost',
-	target: 'assets'
-};
 
+var app = express();
 var GULP_PORT;
 
 
 app.use('/assets/', function(req, res, next) {
-    req.pipe(request(GULP_PORT).pipe(res));
+  req.pipe(request(GULP_PORT).pipe(res));
 });
 
 
-serveGulp.start(serveGulpConf, function() {
-	GULP_PORT = this.address();
-	app.start();
+var onServeGulpStart = function() {
+  GULP_PORT = this.address();
+  app.start();
 });
+
+
+serveGulp.start({
+  port: 0, // random port
+  host: 'localhost',
+  basedir: path.resolve('.'),
+  restrict: path.resolve('assets'),
+  gulpfile: path.resolve('./gulpfile.js')
+});
+
 ```
 
 Or, you could do something similar to the above example with a custom middleware for **ExpressJS**, **uWSGI**, **Rack**, etc.
