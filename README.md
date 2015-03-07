@@ -8,20 +8,20 @@ Build and serve bundles or single files on-demand with Gulp.
 
 Environment variables: `PORT`, `HOST`
 
-**serve-gulp** will serve files at `http://0.0.0.0:80` (configurable) according to the rules in your gulpfile. Only files residing in the paths given are allowed. If no paths are given, it will serve files from the current directory. See [Options](#options) and [How Requests Are Handled](#how_requests_are_handled).
+**serve-gulp** will serve files at `http://0.0.0.0:80` (configurable) according to the rules in your gulpfile. Only files residing in the paths given are allowed. If no paths are given, it will serve files from the current directory. See [Options](#options) and [How Requests Are Handled](#how-requests-are-handled).
 
-If you did not specify a gulpfile with `--gulpfile` and there is a file named `gulpfile.js` in the current directory, that will be used as your gulpfile. If neither is found, **serve-gulp** has a default internal gulpfile. See [Bring Your Own Gulpfile](#bring_your_own_gulpfile) and [Default Gulpfile](#default_gulpfile).
+If you did not specify a gulpfile with `--gulpfile` and there is a file named `gulpfile.js` in the current directory, that will be used as your gulpfile. If neither is found, **serve-gulp** has a default internal gulpfile. See [Bring Your Own Gulpfile](#bring-your-own-gulpfile) and [Default Gulpfile](#default-gulpfile).
 
-Requests with filename `all.js`, `recursive.js`, `all.css` or `recursive.css` will activate rollup mode. See [How Requests Are Handled](#how_requests_are_handled).
+Requests with filename `all.js`, `recursive.js`, `all.css` or `recursive.css` will activate rollup mode. See [How Requests Are Handled](#how-requests-are-handled).
 
 
 More details:
 
 *   [Options](#options)
-*   [Default Gulpfile](#default_gulpfile)
-*   [Bring Your Own Gulpfile](#bring_your_own_gulpfile)
-*   [How Requests Are Handled](#how_requests_are_handled)
-*   [Server Integrations and NodeJS API](#server_integrations_and_nodejs_api)
+*   [Default Gulpfile](#default-gulpfile)
+*   [Bring Your Own Gulpfile](#bring-your-own-gulpfile)
+*   [How Requests Are Handled](#how-requests-are-handled)
+*   [Server Integrations and NodeJS API](#server-integrations-and-nodejs-api)
 
 
 ### Install
@@ -64,7 +64,7 @@ Environment arguments
 
 Implicit arguments
 
-*  If `gulpfile.js` is present in the current directory and `--gulpfile` is not set, the local gulpfile will be used as a custom gulpfile. See [Bring Your Own Gulpfile](#bring_your_own_gulpfile).
+*  If `gulpfile.js` is present in the current directory and `--gulpfile` is not set, the local gulpfile will be used as a custom gulpfile. See [Bring Your Own Gulpfile](#bring-your-own-gulpfile).
 
 
 
@@ -87,7 +87,7 @@ The default gulpfile applies these steps
 
 If you already use Gulp, and you have a `gulpfile.js` in the current directory, **serve-gulp** can use that file.
 
-**Criteria** Your gulpfile must define all of the tasks shown above in [Default Gulpfile](#default_gulpfile). See [example/gulpfile.js](example/gulpfile.js).
+**Criteria** Your gulpfile must define all of the tasks shown above in [Default Gulpfile](#default-gulpfile). See [example/gulpfile.js](example/gulpfile.js).
 
 If you can, try aliasing the `jit:` tasks to your existing tasks like this:
 
