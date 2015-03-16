@@ -268,7 +268,9 @@ Yes. Serve-gulp runs one file at a time and captures the output that would be wr
 
 ### Is this like Gulp OnDemand Server?
 
-No. [Gulp OnDemand Server](https://github.com/ernestoalejo/gulp-ondemand-server) triggers a full gulp build on each request and does not necessarily serve the latest version of the file. This tool builds the requested file on the fly and returns the very freshest version.
+No. [Gulp OnDemand Server](https://github.com/ernestoalejo/gulp-ondemand-server) triggers a full gulp build on each request and does not necessarily serve the latest version of the file.
+
+**serve-gulp** will always return the freshest version, but only processes the files needed for your 
 
 ```
 GET /assets/js/all.js
@@ -317,31 +319,14 @@ In your HTML:
 
 
 
-### Other notes
-
-gulp-ondemand-server[1] kicks off a gulp task after each page load. This tool builds the requested file on the fly and returns the very freshest version.
-
-```
-GET /assets/js/all.js
- -> gulp.run('js', 'all.js');
- -> emit( 'function(){var a,b,c=0;for(a... ' );
-```
-
-[1] https://github.com/ernestoalejo/gulp-ondemand-server
-
-
 ### *Enhancement Proposals*
 
-* Support a list of whitelisted paths as command line arguments, e.g.
-    $ serve-gulp assets/bodies assets/components assets/layouts
 * In "watch mode", (eventually the default for systems with that capability), cache results in-memory and invalidate when any target inode changes.
+   * Support Memcached host/port instead of in-memory
 * Accept fingerprints in filenames and query strings, e.g. file.css?b57b91e893fd6d68ce and file___909fe4bc7387f31fa24a8f.css are the same as file.css
 * Send cache-control headers
 * Gzip
 * Etag
-* I'd like to cache this stuff, please! In-memory is OK, but please give me an optional Memcached host/port.
-   * Invalidate cache on files changed? This requires a watcher, task.
-   * Alternatively move to a model like webpack-dev-server where gulp writes to an in-memory FS
 * How do I deploy my assets to production?
    * Solution 1: create your own gulpfile.js and run it directly to create your production assets.
    * Solution 2: run the asset server in prod. Activate memcached caching. Tools like Google Closure Compiler and Ruby-sass may be difficult or impossible to install on your production environment - if so, consider switching to fully npm-installable options like gulp-uglify (based on Uglify2) and gulp-sass (based on node-sass).
