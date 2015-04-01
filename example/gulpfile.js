@@ -16,7 +16,6 @@ gulp.task('default', ['jit:css']);
 gulp.task('jit:css', function() {
   gulp.src('./assets/css/*.scss')
     .pipe(sass())
-    .pipe(concat('all.css'))
     .pipe(gulp.dest('./assets/dist'))
 });
 
