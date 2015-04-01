@@ -3,7 +3,16 @@ var gulpjit = require('./lib/gulpjit');
 var mediatype = require('./lib/mediatype');
 
 
+function _infill(options) {
+  if (!('gulpfile' in options)) {
+    options['gulpfile'] = path.resolve([__dirname, 'gulpfile.js'].join('/'));
+  }
+  return options;
+}
+
+
 function handler(options) {
+  options = _infill(options);
   var builder = gulpjit.configure(options);
 
   function handleRequest(req, res) {
