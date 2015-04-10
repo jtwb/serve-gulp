@@ -1,4 +1,5 @@
 var http = require('http');
+var path = require('path');
 var gulpjit = require('./lib/gulpjit');
 var mediatype = require('./lib/mediatype');
 
